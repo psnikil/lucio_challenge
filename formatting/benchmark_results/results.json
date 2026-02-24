@@ -1,0 +1,188 @@
+{
+    "PyMuPDF4LLM": {
+        "total_time": 306.3843502998352,
+        "success_count": 16,
+        "avg_time": 19.1490218937397,
+        "throughput_docs_per_sec": 0.05222198844145273,
+        "details": [
+            {
+                "file": "META-Q1-2025-Earnings-Call-Transcript-1.pdf",
+                "duration": 0.7014145851135254,
+                "status": "success"
+            },
+            {
+                "file": "Standard Oil Co. of New Jersey v. United States, 221 U.S. 1 (1911) .pdf",
+                "duration": 8.933933019638062,
+                "status": "success"
+            },
+            {
+                "file": "4. C-2015-07-288.pdf",
+                "duration": 1.2299623489379883,
+                "status": "success"
+            },
+            {
+                "file": "11. C-2015-07-288.pdf",
+                "duration": 5.630875110626221,
+                "status": "success"
+            },
+            {
+                "file": "META-Q2-2024-Earnings-Call-Transcript.pdf",
+                "duration": 0.7543654441833496,
+                "status": "success"
+            },
+            {
+                "file": "1022 - Air India _ Tata SIA.pdf",
+                "duration": 7.593955993652344,
+                "status": "success"
+            },
+            {
+                "file": "NVCA-Model-Document-Investor-Rights-Agreement.docx",
+                "duration": 0,
+                "status": "skipped (not pdf)"
+            },
+            {
+                "file": "CCI Combination Guide.pdf",
+                "duration": 1.3131778240203857,
+                "status": "success"
+            },
+            {
+                "file": "Foxtel Management Pty Limited_130.pdf",
+                "duration": 12.809003353118896,
+                "status": "success"
+            },
+            {
+                "file": "Brown Shoe Co., Inc. v. United States, 370 U.S. 294 (1962) .pdf",
+                "duration": 7.715116500854492,
+                "status": "success"
+            },
+            {
+                "file": " DEF 14A - 04_11_2024 - Exxon Mobil Corporation.pdf",
+                "duration": 8.632657289505005,
+                "status": "success"
+            },
+            {
+                "file": "Eastman Kodak Co. v. Image Technical Services, Inc., 504 U.S. 451 (1992) .pdf",
+                "duration": 4.703454494476318,
+                "status": "success"
+            },
+            {
+                "file": "1649061896992.PDF",
+                "duration": 80.58168172836304,
+                "status": "success"
+            },
+            {
+                "file": "1652423343024.pdf",
+                "duration": 150.85171175003052,
+                "status": "success"
+            },
+            {
+                "file": "United States v. Socony-Vacuum Oil Co., Inc., 310 U.S. 150 (1940) .pdf",
+                "duration": 8.912537574768066,
+                "status": "success"
+            },
+            {
+                "file": "META-Q3-2024-Earnings-Call-Transcript.pdf",
+                "duration": 0.7233541011810303,
+                "status": "success"
+            },
+            {
+                "file": "Bell Atlantic Corp. v. Twombly, 550 U.S. 544 (2007) .pdf",
+                "duration": 5.297149181365967,
+                "status": "success"
+            }
+        ]
+    },
+    "Kreuzberg": {
+        "total_time": 12.604513883590698,
+        "success_count": 17,
+        "avg_time": 0.741441993152394,
+        "throughput_docs_per_sec": 1.348723176237015,
+        "details": [
+            {
+                "file": "META-Q1-2025-Earnings-Call-Transcript-1.pdf",
+                "duration": 0.058422088623046875,
+                "status": "success"
+            },
+            {
+                "file": "Standard Oil Co. of New Jersey v. United States, 221 U.S. 1 (1911) .pdf",
+                "duration": 0.8335816860198975,
+                "status": "success"
+            },
+            {
+                "file": "4. C-2015-07-288.pdf",
+                "duration": 0.01781320571899414,
+                "status": "success"
+            },
+            {
+                "file": "11. C-2015-07-288.pdf",
+                "duration": 0.15250825881958008,
+                "status": "success"
+            },
+            {
+                "file": "META-Q2-2024-Earnings-Call-Transcript.pdf",
+                "duration": 0.06342720985412598,
+                "status": "success"
+            },
+            {
+                "file": "1022 - Air India _ Tata SIA.pdf",
+                "duration": 0.16375470161437988,
+                "status": "success"
+            },
+            {
+                "file": "NVCA-Model-Document-Investor-Rights-Agreement.docx",
+                "duration": 0.018193960189819336,
+                "status": "success"
+            },
+            {
+                "file": "CCI Combination Guide.pdf",
+                "duration": 0.05919456481933594,
+                "status": "success"
+            },
+            {
+                "file": "Foxtel Management Pty Limited_130.pdf",
+                "duration": 0.21573829650878906,
+                "status": "success"
+            },
+            {
+                "file": "Brown Shoe Co., Inc. v. United States, 370 U.S. 294 (1962) .pdf",
+                "duration": 0.775503396987915,
+                "status": "success"
+            },
+            {
+                "file": " DEF 14A - 04_11_2024 - Exxon Mobil Corporation.pdf",
+                "duration": 0.9890785217285156,
+                "status": "success"
+            },
+            {
+                "file": "Eastman Kodak Co. v. Image Technical Services, Inc., 504 U.S. 451 (1992) .pdf",
+                "duration": 0.3998851776123047,
+                "status": "success"
+            },
+            {
+                "file": "1649061896992.PDF",
+                "duration": 2.5689516067504883,
+                "status": "success"
+            },
+            {
+                "file": "1652423343024.pdf",
+                "duration": 4.944859981536865,
+                "status": "success"
+            },
+            {
+                "file": "United States v. Socony-Vacuum Oil Co., Inc., 310 U.S. 150 (1940) .pdf",
+                "duration": 0.7481648921966553,
+                "status": "success"
+            },
+            {
+                "file": "META-Q3-2024-Earnings-Call-Transcript.pdf",
+                "duration": 0.05694222450256348,
+                "status": "success"
+            },
+            {
+                "file": "Bell Atlantic Corp. v. Twombly, 550 U.S. 544 (2007) .pdf",
+                "duration": 0.5384941101074219,
+                "status": "success"
+            }
+        ]
+    }
+}
