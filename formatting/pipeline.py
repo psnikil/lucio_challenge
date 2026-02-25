@@ -149,23 +149,6 @@ async def embed_sink(out_q, metrics_q):
             report(metrics_q, "db_sink", time.perf_counter() - t_sink, len(chunks))
 
 
-# def collect_metrics(metrics_q, done_event):
-#     totals = collections.defaultdict(float)
-#     counts = collections.defaultdict(int)
-
-#     while not done_event.is_set() or not metrics_q.empty():
-#         try:
-#             name, dt, n = metrics_q.get(timeout=0.5)
-#             totals[name] += dt
-#             counts[name] += n
-#         except Exception:
-#             pass
-
-#     print("\n=== PIPELINE TIMING REPORT ===")
-#     for k in sorted(totals):
-#         avg = totals[k] / max(1, counts[k])
-#         print(f"{k:25s}  total={totals[k]:8.2f}s  avg={avg:8.6f}s  n={counts[k]}")
-
 def sink_process_entry(out_q, metrics_q):
     asyncio.run(embed_sink(out_q, metrics_q))
 
