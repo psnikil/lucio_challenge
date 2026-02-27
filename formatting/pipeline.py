@@ -16,7 +16,7 @@ from typing import List, Sequence, Optional
 from sentence_transformers import SentenceTransformer
 from dataclasses import dataclass
 import torch
-os.environ["PYTORCH_ALLOC_CONF"] = "expandable_segments:True"
+# os.environ["PYTORCH_ALLOC_CONF"] = "expandable_segments:True"
 
 torch.cuda.empty_cache()
 ROOT = Path("./data/Testing_Set")
@@ -25,7 +25,7 @@ NUM_WORKERS = mp.cpu_count() or 8
 DOC_BATCH = 1
 QUEUE_MAX = 65536
 USE_COMPRESSION = False
-CHUNK_SIZE = 1500
+CHUNK_SIZE = 1200
 CHUNK_OVERLAP = 200
 CHUNKS_PER_MESSAGE = 4096
 PAGE_RANGE = 25
@@ -137,13 +137,13 @@ def parse_worker(worker_id, in_q, out_q, metrics_q):
                         batch_chunks.append(c)
                         total_chunks += 1
 
-                        if total_chunks % CHUNKS_PER_MESSAGE == 0:
+                        # if total_chunks % CHUNKS_PER_MESSAGE == 0:
                             # t_ser = now()
-                            payload = serialize_chunks(batch_chunks)
-                            # if ENABLE_FINE_METRICS:
-                            #     report(metrics_q, "ipc_serialize", now() - t_ser, len(batch_chunks), worker_id=worker_id)
-                            out_q.put(payload)
-                            batch_chunks = []
+            payload = serialize_chunks(batch_chunks)
+            # if ENABLE_FINE_METRICS:
+            #     report(metrics_q, "ipc_serialize", now() - t_ser, len(batch_chunks), worker_id=worker_id)
+            out_q.put(payload)
+            batch_chunks = []
                     # t_chunk += now() - t_c
 
             doc.close()
@@ -163,10 +163,11 @@ def parse_worker(worker_id, in_q, out_q, metrics_q):
         #     report(metrics_q, "parse_batch_total", now() - t0, total_chunks, worker_id=worker_id)
 
 
-async def embed_sink(out_q, metrics_q):
+async def embed_sink(out_q, metrics_q, llm:None,dim:None,index:None):
     # Doing this to test the pipeline without the embedding model
     loop = asyncio.get_running_loop()
-
+    batched_chunks = []
+    count = 0
     TEST_MODE = False    
     if TEST_MODE:
         while True:
@@ -178,47 +179,66 @@ async def embed_sink(out_q, metrics_q):
             # if ENABLE_FINE_METRICS:
             #     report(metrics_q, "ipc_deserialize", now() - t_deser, len(chunks))
     else:
-        llm = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2", 
-                            device="cuda",
-                            cache_folder=EMBEDDER_MODEL_PATH,
-                            model_kwargs={"dtype": torch.bfloat16})
-        dim = len(llm.encode(["test"])[0])
-        print(dim)
-        index = faiss.IndexHNSWFlat(dim, 32)
-        index.hnsw.efConstruction = 200
-
-        print(f"FAISS index dim={dim}")
 
         loop = asyncio.get_running_loop()
         while True:
             payload = await loop.run_in_executor(None, out_q.get)
+            # print(len(payload))
             if payload is None:
+                embs = await loop.run_in_executor(None, lambda: llm.encode(batched_chunks, batch_size=256, show_progress_bar=True))
+                # vectors = np.array(embs, dtype="float32")
+                # report(metrics_q, "embedding", time.perf_counter() - t_embed, len(chunks))
+                print(embs.shape)
+                t_db = time.perf_counter()
+                index.add(embs)
+                batched_chunks = []
+
+
                 break
 
             t_deser = time.perf_counter()
 
             chunks = deserialize_chunks(payload)
-            # report(metrics_q, "ipc_deserialize", time.perf_counter() - t_deser, len(chunks))
-            # print(len(chunks[0]))
-            # print(chunks)
-            # break
-            t_embed = time.perf_counter()
-            embs = await loop.run_in_executor(None, lambda: llm.encode(chunks, batch_size=512, show_progress_bar=True))
-            vectors = np.array(embs, dtype="float32")
-            # report(metrics_q, "embedding", time.perf_counter() - t_embed, len(chunks))
+            # print(len(chunks))
 
-            t_db = time.perf_counter()
-            index.add(vectors)
+            # if chunks:
+            batched_chunks.extend(chunks)
+            # print(len(batched_chunks))
+            # report(metrics_q, "ipc_deserialize", time.perf_counter() - t_deser, len(chunks))
+            if (len(batched_chunks) >= count*512*32):
+                t_embed = time.perf_counter()
+                embs = await loop.run_in_executor(None, lambda: llm.encode(batched_chunks, batch_size=256, show_progress_bar=True))
+                # vectors = np.array(embs, dtype="float32")
+                # report(metrics_q, "embedding", time.perf_counter() - t_embed, len(chunks))
+                print(embs.shape)
+                t_db = time.perf_counter()
+                index.add(embs)
+                batched_chunks = []
+                count += 1
             # report(metrics_q, "faiss_add", time.perf_counter() - t_db, len(chunks))
 
         print("FAISS index size:", index.ntotal)
 
 
-def sink_process_entry(out_q, metrics_q):
-    asyncio.run(embed_sink(out_q, metrics_q))
+def sink_process_entry(out_q, metrics_q, llm, dim, index):
+    asyncio.run(embed_sink(out_q, metrics_q, llm, dim, index))
 
 def main():
     mp.set_start_method("spawn")
+
+    llm = SentenceTransformer("Daemontatox/all-MiniLM-L6-v2-bnb-4bit", 
+                            device="cuda:0",
+                            cache_folder=EMBEDDER_MODEL_PATH,
+                            trust_remote_code=True,
+                            )
+    dim = len(llm.encode(["test"])[0])
+    print(dim)
+    index = faiss.IndexHNSWFlat(dim, 32)
+    index.hnsw.efConstruction = 200
+
+    print(f"FAISS index dim={dim}")
+
+
     metrics_q = mp.Queue()
 
     # done_event = mp.Event()
@@ -230,7 +250,7 @@ def main():
 
     sink_proc = mp.Process(
         target=sink_process_entry,
-        args=(out_q, metrics_q),
+        args=(out_q, metrics_q, llm, dim, index),
     )
     sink_proc.start()
 
